@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>English Through Series</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      color: #2c2c2c;
+      min-height: 100vh;
+    }
+    header {
+      text-align: center;
+      padding: 3rem 1.5rem 2.5rem;
+      color: white;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 800;
+      font-size: 2.8rem;
+      margin: 0;
+      background: linear-gradient(to right, #ff9a9e, #fad0c4, #a1c4fd, #c2e9fb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-size: 300% 300%;
+      animation: gradientShift 6s ease infinite;
+    }
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    header p {
+      max-width: 700px;
+      margin: 1rem auto 0;
+      font-size: 1.1rem;
+      opacity: 0.95;
+      line-height: 1.6;
+    }
+    .products-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      padding: 0 2rem 3rem;
+      justify-content: center;
+    }
+    .product-card {
+      background: white;
+      border-radius: 16px;
+      width: 270px;
+      overflow: hidden;
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .product-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .product-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      border: 2px solid;
+      border-image: linear-gradient(45deg, #ff9a9e, #a1c4fd) 1;
+    }
+    .product-card img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+    }
+    .product-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin: 1.1rem 0 0.4rem;
+      color: #2c3e50;
+    }
+    .product-card .level {
+      font-size: 0.9rem;
+      color: #7f8c8d;
+      margin-bottom: 0.6rem;
+    }
+    .product-card p.price {
+      font-weight: bold;
+      color: #e74c3c;
+      font-size: 1.2rem;
+      margin: 0.4rem 0;
+    }
+    .product-card button {
+      margin: 1rem 0 1.3rem;
+      padding: 0.6rem 1.4rem;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: bold;
+      color: white;
+      background: #3498db;
+      box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+      transition: all 0.3s ease;
+    }
+    .product-card:hover button {
+      box-shadow: 0 0 20px rgba(52, 152, 219, 0.8);
+      transform: scale(1.05);
+    }
+    .product-card:nth-child(2) button { background: #8e44ad; }
+    .product-card:nth-child(2):hover button { box-shadow: 0 0 20px rgba(142, 68, 173, 0.8); }
+    .product-card:nth-child(3) button { background: #e67e22; }
+    .product-card:nth-child(3):hover button { box-shadow: 0 0 20px rgba(230, 126, 34, 0.8); }
+    .product-card:nth-child(4) button { background: #27ae60; }
+    .product-card:nth-child(4):hover button { box-shadow: 0 0 20px rgba(39, 174, 96, 0.8); }
+    .product-card:nth-child(5) button { background: #e74c3c; }
+    .product-card:nth-child(5):hover button { box-shadow: 0 0 20px rgba(231, 76, 60, 0.8); }
+    .product-card:nth-child(6) button { background: #2c3e50; }
+    .product-card:nth-child(6):hover button { box-shadow: 0 0 20px rgba(44, 62, 80, 0.8); }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.92);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: white;
+      width: 90%;
+      max-width: 780px;
+      border-radius: 20px;
+      padding: 30px;
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 0 30px rgba(0, 150, 255, 0.4);
+    }
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 25px;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: #aaa;
+      transition: color 0.2s;
+    }
+    .modal-close:hover { color: #e74c3c; }
+    .modal h2 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 800;
+      font-size: 1.9rem;
+      color: #2c3e50;
+      margin-top: 0;
+    }
+    .modal .level {
+      display: inline-block;
+      background: linear-gradient(to right, #ff9a9e, #fad0c4);
+      color: #2c3e50;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-weight: bold;
+      margin-bottom: 1.2rem;
+      font-size: 0.95rem;
+    }
+    .modal p {
+      line-height: 1.7;
+      color: #444;
+      margin-bottom: 1.2rem;
+    }
+    .buy-btn {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.8rem 2rem;
+      background: linear-gradient(45deg, #ff416c, #ff4b2b);
+      color: white;
+      text-decoration: none;
+      border-radius: 50px;
+      font-weight: bold;
+      box-shadow: 0 0 16px rgba(255, 75, 43, 0.6);
+      transition: all 0.3s ease;
+    }
+    .buy-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px rgba(255, 65, 108, 0.9);
+    }
+    .carousel {
+      position: relative;
+      margin-bottom: 1.4rem;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+    }
+    .carousel-slides {
+      display: flex;
+      transition: transform 0.4s ease;
+    }
+    .carousel-slides img {
+      min-width: 100%;
+      height: auto;
+      display: block;
+    }
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.9);
+      border: none;
+      font-size: 1.5rem;
+      width: 44px;
+      height: 44px;
+      cursor: pointer;
+      border-radius: 50%;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    .carousel-prev { left: 12px; }
+    .carousel-next { right: 12px; }
+    @media (max-width: 600px) {
+      header h1 { font-size: 2rem; }
+      .product-card { width: 100%; max-width: 300px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>English Through Series</h1>
+    <p>Learn real English from your favorite shows — natural speech, modern vocabulary, and cultural context.</p>
+  </header>
+
+  <div class="products-grid" id="productsGrid">
+    <!-- Friends -->
+    <div class="product-card">
+      <img src="./images/friends.jpg" alt="Friends">
+      <h3>English Through <i>Friends</i></h3>
+      <div class="level">Level: A2–B1</div>
+      <p class="price">$39</p>
+      <button onclick="openModal('friends')">Buy Course</button>
+    </div>
+
+    <!-- The Crown -->
+    <div class="product-card">
+      <img src="./images/crown.webp" alt="The Crown">
+      <h3>English Through <i>The Crown</i></h3>
+      <div class="level">Level: B2–C1</div>
+      <p class="price">$49</p>
+      <button onclick="openModal('crown')">Buy Course</button>
+    </div>
+
+    <!-- Stranger Things -->
+    <div class="product-card">
+      <img src="./images/scale_1200.jpg" alt="Stranger Things">
+      <h3>English Through <i>Stranger Things</i></h3>
+      <div class="level">Level: B1–B2</div>
+      <p class="price">$42</p>
+      <button onclick="openModal('stranger')">Buy Course</button>
+    </div>
+
+    <!-- Breaking Bad -->
+    <div class="product-card">
+      <img src="./images/breaking-bad.jpg" alt="Breaking Bad">
+      <h3>English Through <i>Breaking Bad</i></h3>
+      <div class="level">Level: B2–C1</div>
+      <p class="price">$47</p>
+      <button onclick="openModal('breaking')">Buy Course</button>
+    </div>
+
+    <!-- The Office (US) -->
+    <div class="product-card">
+      <img src="./images/the-office.jpg" alt="The Office">
+      <h3>English Through <i>The Office</i></h3>
+      <div class="level">Level: A2–B1</div>
+      <p class="price">$37</p>
+      <button onclick="openModal('office')">Buy Course</button>
+    </div>
+  </div>
+
+  <div id="productModal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeModal()">&times;</span>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const cards = document.querySelectorAll(".product-card");
+      cards.forEach((card, index) => {
+        setTimeout(() => { card.classList.add("visible"); }, 200 * index);
+      });
+    });
+
+    const courses = {
+      friends: {
+        title: "English Through Friends",
+        level: "A2–B1 (Pre-Intermediate to Intermediate)",
+        price: "$39",
+        description: "Perfect for beginners! <i>Friends</i> uses clear, everyday American English with simple sentence structures, lots of repetition, and friendly intonation. Ideal for learning casual conversations, phrasal verbs, and humor in context.",
+        images: ["./images/friends.jpg"]
+      },
+      crown: {
+        title: "English Through The Crown",
+        level: "B2–C1 (Upper-Intermediate to Advanced)",
+        price: "$49",
+        description: "Refine your formal British English! <i>The Crown</i> features sophisticated vocabulary, RP (Received Pronunciation) accents, historical references, and complex sentence structures. Great for learners aiming for academic or professional fluency.",
+        images: ["./images/crown.jpg"]
+      },
+      stranger: {
+        title: "English Through Stranger Things",
+        level: "B1–B2 (Intermediate)",
+        price: "$42",
+        description: "Blend nostalgia with modern American English! <i>Stranger Things</i> mixes 80s slang with contemporary teen dialogue. Great for practicing listening to different age groups and emotional expressions.",
+        images: ["./images/stranger-things.jpg"]
+      },
+      breaking: {
+        title: "English Through Breaking Bad",
+        level: "B2–C1 (Upper-Intermediate to Advanced)",
+        price: "$47",
+        description: "Master intense, realistic American dialogue! <i>Breaking Bad</i> features fast-paced conversations, regional accents (New Mexico), scientific terms, and high-stakes emotional language. Ideal for advanced listening practice.",
+        images: ["./images/breaking-bad.jpg"]
+      },
+      office: {
+        title: "English Through The Office (US)",
+        level: "A2–B1 (Elementary to Pre-Intermediate)",
+        price: "$37",
+        description: "Learn workplace English with humor! <i>The Office</i> uses natural office conversations, sarcasm, and American corporate culture. Perfect for beginners who want to understand informal spoken English and social dynamics.",
+        images: ["./images/the-office.jpg"]
+      }
+    };
+
+    function openModal(id) {
+      const course = courses[id];
+      if (!course) return;
+
+      let slides = course.images.map(img => `<img src="${img}" alt="">`).join('');
+      let carousel = `
+        <div class="carousel">
+          <div class="carousel-slides" id="modalCarouselSlides">${slides}</div>
+        </div>
+      `;
+
+      document.getElementById('modalBody').innerHTML = `
+        <h2>${course.title}</h2>
+        <div class="level">${course.level}</div>
+        <p>${course.description}</p>
+        <p class="price" style="font-size:1.3rem;color:#e74c3c;">${course.price}</p>
+        <a href="mailto:evagerasimenko@gmail.com?subject=Enroll in ${encodeURIComponent(course.title)}" class="buy-btn">Enroll Now</a>
+        ${carousel}
+      `;
+
+      document.getElementById('productModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('productModal').style.display = 'none';
+    }
+
+    window.onclick = function(e) {
+      const modal = document.getElementById('productModal');
+      if (e.target === modal) closeModal();
+    };
+  </script>
+
+</body>
+</html>
